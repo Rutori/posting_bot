@@ -1,0 +1,4 @@
+/postingbot.iml
+go.sum
+config.json
+*.sqlite
