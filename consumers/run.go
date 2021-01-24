@@ -6,7 +6,8 @@ import (
 )
 
 func Run() {
-	withInterval(telegram.FetchUpdates, time.Second)
+	go withInterval(telegram.FetchUpdates, time.Second)
+	go withInterval(telegram.PostMeme, time.Second)
 }
 
 func withInterval(launch func(), interval time.Duration) {

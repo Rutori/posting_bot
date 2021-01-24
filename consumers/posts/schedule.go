@@ -5,15 +5,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"postingbot/config"
 	"strconv"
-	"strings"
 	"time"
 )
 
-func Schedule(message *tgbotapi.Message) (err error) {
+func Schedule(message *tgbotapi.Message) (date string, err error) {
 	var lastDate int64
 	err = config.DB.QueryRow(`SELECT coalesce(max(date),0) FROM queue`).Scan(&lastDate)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	if lastDate < time.Now().Unix() {
@@ -24,12 +23,9 @@ func Schedule(message *tgbotapi.Message) (err error) {
 		fmt.Sprintf("%s|%s", strconv.Itoa(message.MessageID), strconv.Itoa(message.From.ID)),
 	}
 	switch {
-	case len(*message.Photo) > 0:
-		var photos []string
-		for _, photo := range *message.Photo {
-			photos = append(photos, photo.FileID)
-		}
-		args = append(args, strings.Join(photos, ","))
+	case message.Photo != nil && len(*message.Photo) > 0:
+		photos := *message.Photo
+		args = append(args, photos[0].FileID)
 		_, err = config.DB.Exec(`INSERT INTO queue(date,id, photo) VALUES (?,?,?)`, args...)
 
 	case message.Video != nil:
@@ -46,5 +42,5 @@ func Schedule(message *tgbotapi.Message) (err error) {
 
 	}
 
-	return err
+	return time.Unix(lastDate+config.JSON.Schedule.Interval, 0).String(), err
 }

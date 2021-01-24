@@ -3,6 +3,7 @@ package telegram
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/mattn/go-sqlite3"
 	"postingbot/config"
 	"postingbot/consumers/posts"
 )
@@ -21,9 +22,24 @@ func FetchUpdates() {
 		if !checkAuth(update.Message.From.ID) {
 			continue
 		}
-		err = posts.Schedule(update.Message)
-		if err != nil {
+		date, err := posts.Schedule(update.Message)
+		switch {
+		case err == nil:
+
+		case err.(sqlite3.Error).ExtendedCode == 0:
+
+		case err.(sqlite3.Error).ExtendedCode == sqlite3.ErrConstraintUnique:
+			continue
+
+		default:
 			fmt.Printf("\ntelegram.FetchUpdates #2: %s\n", err.Error())
+			return
+		}
+		successMsg := tgbotapi.NewMessage(int64(update.Message.From.ID), fmt.Sprintf("пост добавлен на %s", date))
+		successMsg.ReplyToMessageID = update.Message.MessageID
+		_, err = config.Bot.Send(successMsg)
+		if err != nil {
+			fmt.Printf("\ntelegram.FetchUpdates #3: %s\n", err.Error())
 			return
 		}
 	}
