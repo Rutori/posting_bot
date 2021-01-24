@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 	"io/ioutil"
 	"log"
 	"postingbot/config"
@@ -27,6 +28,9 @@ func main() {
 	}
 
 	config.DB, err = sqlx.Connect("sqlite3", config.JSON.DatabaseFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	consumers.Run()
 }

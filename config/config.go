@@ -20,5 +20,5 @@ var DB *sqlx.DB
 type Schedule struct {
 	From     string `json:"from"`
 	To       string `json:"to"`
-	Interval int    `json:"interval"`
+	Interval int64  `json:"interval"`
 }

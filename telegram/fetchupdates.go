@@ -21,13 +21,13 @@ func FetchUpdates() {
 		if !checkAuth(update.Message.From.ID) {
 			continue
 		}
-
 		err = posts.Schedule(update.Message)
 		if err != nil {
 			fmt.Printf("\ntelegram.FetchUpdates #2: %s\n", err.Error())
 			return
 		}
 	}
+
 }
 
 func checkAuth(id int) bool {
