@@ -18,7 +18,7 @@ var Bot *tgbotapi.BotAPI
 var DB *sqlx.DB
 
 type Schedule struct {
-	From     string `json:"from"`
-	To       string `json:"to"`
-	Interval int64  `json:"interval"`
+	From     int   `json:"from"`
+	To       int   `json:"to"`
+	Interval int64 `json:"interval"`
 }

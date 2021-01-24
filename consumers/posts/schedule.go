@@ -14,12 +14,29 @@ func Schedule(message *tgbotapi.Message) (date string, err error) {
 	if err != nil {
 		return "", err
 	}
-
+	var postDate int64
 	if lastDate < time.Now().Unix() {
-		lastDate = time.Now().Unix()
+		postDate = time.Now().Unix()
+	} else {
+		postDate = lastDate
 	}
+
+	t := time.Unix(postDate, 0)
+	dayStart := time.Date(t.Year(), t.Month(), t.Day(), config.JSON.Schedule.From, 0, 0, t.Nanosecond(), t.Location())
+	dayEnd := time.Date(t.Year(), t.Month(), t.Day(), config.JSON.Schedule.To, 0, 0, t.Nanosecond(), t.Location())
+
+	postDate += config.JSON.Schedule.Interval
+
+	if postDate < dayStart.Unix() {
+		postDate = dayStart.Unix()
+	}
+
+	if postDate > dayEnd.Unix() {
+		postDate = dayStart.Add(24 * time.Hour).Unix()
+	}
+
 	var args = []interface{}{
-		lastDate + config.JSON.Schedule.Interval,
+		postDate,
 		fmt.Sprintf("%s|%s", strconv.Itoa(message.MessageID), strconv.Itoa(message.From.ID)),
 	}
 	switch {
@@ -42,5 +59,5 @@ func Schedule(message *tgbotapi.Message) (date string, err error) {
 
 	}
 
-	return time.Unix(lastDate+config.JSON.Schedule.Interval, 0).String(), err
+	return time.Unix(postDate, 0).String(), err
 }
