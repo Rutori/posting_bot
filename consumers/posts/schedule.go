@@ -42,8 +42,8 @@ func Schedule(message *tgbotapi.Message) (date string, err error) {
 	switch {
 	case message.Photo != nil && len(*message.Photo) > 0:
 		photos := *message.Photo
-		args = append(args, photos[0].FileID)
-		_, err = config.DB.Exec(`INSERT INTO queue(date,id, photo) VALUES (?,?,?)`, args...)
+		args = append(args, message.Text, photos[0].FileID)
+		_, err = config.DB.Exec(`INSERT INTO queue(date,id, text, photo) VALUES (?,?,?,?)`, args...)
 
 	case message.Video != nil:
 		args = append(args, message.Video.FileID)
