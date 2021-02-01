@@ -5,12 +5,12 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"postingbot/config"
-	"postingbot/consumers/posts"
+	"postingbot/entities"
 	"time"
 )
 
 func PostMeme() {
-	message := &posts.Message{}
+	message := &entities.Message{}
 	err := config.DB.QueryRow(`
 		SELECT 
 		       coalesce(text,''), 

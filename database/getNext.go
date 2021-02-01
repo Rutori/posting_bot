@@ -2,15 +2,16 @@ package database
 
 import (
 	"postingbot/config"
-	"postingbot/consumers/posts"
+	"postingbot/entities"
 	"time"
 )
 
-func GetNext() (*posts.Message, error) {
-	msgStruct := &posts.Message{}
+func GetNext() (*entities.Message, error) {
+	msgStruct := &entities.Message{}
+	timePost := time.Now().Unix()
 	err := config.DB.QueryRow("SELECT `text`,`photo`,`video`,`gif` FROM `queue` WHERE `date` > ? AND `date` < ?",
-		time.Now().Second()-config.JSON.Schedule.Interval,
-		time.Now().Second()+config.JSON.Schedule.Interval).Scan(&msgStruct.Text, &msgStruct.Photo, &msgStruct.Video, msgStruct.Gif)
+		timePost-config.JSON.Schedule.Interval,
+		timePost+config.JSON.Schedule.Interval).Scan(&msgStruct.Text, &msgStruct.Photo, &msgStruct.Video, msgStruct.Gif)
 	if err != nil {
 		return nil, err
 	}

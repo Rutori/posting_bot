@@ -1,0 +1,14 @@
+{
+  "databaseFile" : "base.sqlite",
+  "key": "%%TOKEN GOES HERE%%",
+  "channel": -1,
+  "managers" : [
+    1,
+    2
+  ],
+  "schedule": {
+    "from": 10,
+    "to":   23,
+    "interval": 3600
+  }
+}

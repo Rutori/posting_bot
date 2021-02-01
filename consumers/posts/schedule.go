@@ -3,6 +3,7 @@ package posts
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"math"
 	"postingbot/config"
 	"strconv"
 	"time"
@@ -25,7 +26,11 @@ func Schedule(message *tgbotapi.Message) (date string, err error) {
 	dayStart := time.Date(t.Year(), t.Month(), t.Day(), config.JSON.Schedule.From, 0, 0, t.Nanosecond(), t.Location())
 	dayEnd := time.Date(t.Year(), t.Month(), t.Day(), config.JSON.Schedule.To, 0, 0, t.Nanosecond(), t.Location())
 
-	postDate += config.JSON.Schedule.Interval
+	postDate = int64(
+		math.Floor(
+			float64(
+				(postDate+config.JSON.Schedule.Interval)/config.JSON.Schedule.Interval),
+		) * float64(config.JSON.Schedule.Interval))
 
 	if postDate < dayStart.Unix() {
 		postDate = dayStart.Unix()
