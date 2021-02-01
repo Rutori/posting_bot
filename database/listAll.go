@@ -10,7 +10,7 @@ func ListAll() (list []*entities.Message, err error) {
 	err = config.DB.Select(&list, `
 		SELECT 
 		       date, 
-		       text, 
+		       coalesce(text,'') as text, 
 		       coalesce(photo,'') as photo, 
 		       coalesce(video,'') as video, 
 		       coalesce(gif,'') as gif,

@@ -21,6 +21,10 @@ var textTypes = map[int]string{
 
 func GetQueue() (message tgbotapi.MessageConfig, err error) {
 	list, err := database.ListAll()
+	if err != nil {
+		return message, err
+	}
+
 	for _, post := range list {
 		message.Text += fmt.Sprintf(lineTemplate, textTypes[posts.GetType(post)], post.Date.In(time.Local).Format("15:04 02/01/2006 "))
 	}
