@@ -15,7 +15,7 @@ const totalTemplate = "\nВсего %d постов"
 var textTypes = map[int]string{
 	constants.MessageTypes.Text:  "текстом",
 	constants.MessageTypes.Pic:   "фото",
-	constants.MessageTypes.Video: "видно",
+	constants.MessageTypes.Video: "видео",
 	constants.MessageTypes.Gif:   "гифкой",
 }
 
